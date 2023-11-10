@@ -16,12 +16,40 @@ router.post("/initialize-database", async function (request, response) {
 });
 
 //get data in database
-router.get("/get-database", async function (request, response) {
+router.get("/get-database/:month", async function (request, response) {
+  let getmonth = request.params.month;
+  let month = 0;
+  if (getmonth === "January") {
+    month = 1;
+  } else if (getmonth === "February") {
+    month = 2;
+  } else if (getmonth === "March") {
+    month = 3;
+  } else if (getmonth === "April") {
+    month = 4;
+  } else if (getmonth === "May") {
+    month = 5;
+  } else if (getmonth === "June") {
+    month = 6;
+  } else if (getmonth === "July") {
+    month = 7;
+  } else if (getmonth === "August") {
+    month = 8;
+  } else if (getmonth === "September") {
+    month = 9;
+  } else if (getmonth === "October") {
+    month = 10;
+  } else if (getmonth === "November") {
+    month = 11;
+  } else if (getmonth === "December") {
+    month = 12;
+  }
+  console.log(month);
   const query = {};
   const result = await client
     .db("Roxiler")
     .collection("Product")
-    .find(query)
+    .find({ $expr: { $eq: [{ $month: "$dateOfSale" }, month] } })
     .toArray();
   result
     ? response.send(result)
@@ -98,8 +126,35 @@ router.get("/statistics", async function (request, response) {
 });
 
 //get bar-chart
-router.get("/bar-chart", async function (request, response) {
-  const { month } = request.query;
+router.get("/bar-chart/:month", async function (request, response) {
+  let getmonth = request.params.month;
+  let month = 0;
+  if (getmonth === "January") {
+    month = 1;
+  } else if (getmonth === "February") {
+    month = 2;
+  } else if (getmonth === "March") {
+    month = 3;
+  } else if (getmonth === "April") {
+    month = 4;
+  } else if (getmonth === "May") {
+    month = 5;
+  } else if (getmonth === "June") {
+    month = 6;
+  } else if (getmonth === "July") {
+    month = 7;
+  } else if (getmonth === "August") {
+    month = 8;
+  } else if (getmonth === "September") {
+    month = 9;
+  } else if (getmonth === "October") {
+    month = 10;
+  } else if (getmonth === "November") {
+    month = 11;
+  } else if (getmonth === "December") {
+    month = 12;
+  }
+
   const priceRanges = [
     { range: "0 - 100", min: 0, max: 100 },
     { range: "101 - 200", min: 101, max: 200 },
@@ -120,13 +175,13 @@ router.get("/bar-chart", async function (request, response) {
       .db("Roxiler")
       .collection("Product")
       .countDocuments({
-        dateOfSale: { $regex: new RegExp(month, "i") },
+        $expr: { $eq: [{ $month: "$dateOfSale" }, month] },
         price: { $gte: range.min, $lte: range.max },
       });
     result[range.range] = count;
   }
 
-  response.status(200).json(result);
+  response.status(200).json({ message: `${getmonth}`, result });
 });
 
 //get pie-chart
