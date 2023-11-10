@@ -3,6 +3,7 @@ dotenv.config();
 import { MongoClient } from "mongodb";
 const app = express();
 import cors from "cors";
+app.use(cors());
 app.use(express.json());
 import express from "express";
 import roxilerRouter from "./router/roxiler.router.js";
